@@ -1,0 +1,47 @@
+Add Connection String:
+sudo nano /etc/iotedge/config.yaml
+
+Restart iotEdge:
+sudo service iotedge restart
+
+RTSP Connection:
+nano /data/misc/storage/Intelligent-Video-Analytics-with-NVIDIA-Jetson-and-Microsoft-Azure/services/DEEPSTREAM/configs/DSConfig-CustomVisionAI.txt
+
+
+___________________ Add Custom Image _________________________________________________
+#Delete the contents of the CUSTOM_VISION_AI directory to remove existing model and TensorRT engine
+rm -rf /data/misc/storage/Intelligent-Video-Analytics-with-NVIDIA-Jetson-and-Microsoft-Azure/services/CUSTOM_VISION_AI/*
+
+#Navigate to CUSTOM_VISION_AI directory
+cd /data/misc/storage/Intelligent-Video-Analytics-with-NVIDIA-Jetson-and-Microsoft-Azure/services/CUSTOM_VISION_AI
+
+#Download the exported model from CustomVision.AI
+#Note: It is important that the link to your model is quoted when running this command!
+sudo wget -O model.zip "<Add url link of model>"
+
+#Unzip the model.zip that we just downloaded
+unzip model.zip
+
+#Install dos2unix
+sudo apt install -y dos2unix
+
+#Convert labels.txt to Unix format (otherwise DeepStream will append '/r' to object value)
+dos2unix labels.txt
+
+
+
+deepstream-test5 app file path:
+/opt/nvidia/deepstream/deepstream-6.0/sources/apps/sample_apps/deepstream-test5
+
+Run Node-Red in jetson:
+docker run -it -p 1880:1880 --name mynodered nodered/node-red
+
+Enter Docker container:
+sudo docker exec -it <container name> /bin/bash
+
+main deepstream-test5-app file in container:
+/opt/nvidia/deepstream/deepstream-6.0/bin/deepstream-test5-app
+
+Copy files from host to cantianer:
+docker cp <src-path> <container>:<dest-path> 
+
