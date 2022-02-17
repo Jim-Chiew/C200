@@ -43,7 +43,7 @@ rtsp-reconnect-interval-sec=60
 # (1): memtype_pinned   - Memory type Host Pinned
 # (2): memtype_unified  - Memory type Unified
 cudadec-memtype=0
-drop-frame-interval=10   #By Jim
+drop-frame-interval=24   #Interval to drop the frames By Jim
 
 [sink0]
 enable=1
