@@ -45,3 +45,5 @@ main deepstream-test5-app file in container:
 Copy files from host to cantianer:
 docker cp <src-path> <container>:<dest-path> 
 
+Just compile the test file:
+gcc -L/home/c200/paho.mqtt.c/build/output <File> -lpaho-mqtt3c
