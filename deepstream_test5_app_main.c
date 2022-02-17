@@ -54,8 +54,8 @@
 /* Paho */
 #include "MQTTClient.h"
 
-#define ADDRESS     "192.168.1.19:1883"
-#define CLIENTID    "DeepstreamApp"
+#define ADDRESS     "tcp://localhost:1883"
+#define CLIENTID    "deepstreamapp"
 #define TOPIC       "deepstream"
 #define QOS         0
 #define TIMEOUT     10000L
@@ -175,12 +175,20 @@ static AppConfigAnalyticsModel model_used = APP_CONFIG_ANALYTICS_MODELS_UNKNOWN;
 static struct timeval ota_request_time;
 static struct timeval ota_completion_time;
 
-/* Paho MQTT Initialize */
+/* Paho MQTT Initialize*/
 MQTTClient client;
 MQTTClient_connectOptions conn_opts = MQTTClient_connectOptions_initializer;
 MQTTClient_message pubmsg = MQTTClient_message_initializer;
 MQTTClient_deliveryToken token;
 int rc;
+
+/* Jim Counter Initialize*/
+int Circle;
+int Heart;
+int Square;
+int Triangle;
+char mqttOutput[200];
+
 
 typedef struct _OTAInfo
 {
@@ -604,6 +612,11 @@ bbox_generated_probe_after_analytics (AppCtx * appCtx, GstBuffer * buf,
   GstClockTime buffer_pts = 0;
   guint32 stream_id = 0;
 
+  Circle = 0; //By JIM reset counter
+  Heart = 0;
+  Square = 0;
+  Triangle = 0;  
+
   for (NvDsMetaList * l_frame = batch_meta->frame_meta_list; l_frame != NULL;
       l_frame = l_frame->next) {
     NvDsFrameMeta *frame_meta = l_frame->data;
@@ -631,27 +644,16 @@ bbox_generated_probe_after_analytics (AppCtx * appCtx, GstBuffer * buf,
 
       obj_meta = (NvDsObjectMeta *) (l->data);
 
-      /* Publish MQTT */
-      pubmsg.payload;
-      pubmsg.qos = QOS;
-      pubmsg.retained = 0;
-
+      /* Count Object Jim MQTT */
       if (obj_meta->class_id == 0) {
-          pubmsg.payload = "EyesClosed";
-          printf("Detected: EyesClosed\n"); 
+          Circle ++;
       } else if (obj_meta->class_id == 1) {
-          pubmsg.payload = "Normal";
-          printf("Detected: Normal\n"); 
-      } else if (obj_meta->class_id == 1) {
-          pubmsg.payload = "Normal";
-          printf("Detected: Normal\n"); 
-      }else { 
-          pubmsg.payload = "Yawn";
-          printf("Detected: Yawn\n"); 
+          Heart ++;
+      } else if (obj_meta->class_id == 2) { 
+          Square ++;
+      } else if (obj_meta->class_id == 3){
+          Triangle ++;
       }
-    
-      pubmsg.payloadlen = strlen(pubmsg.payload);
-      MQTTClient_publishMessage(client, TOPIC, &pubmsg, &token);
 
       {
         /**
@@ -724,6 +726,16 @@ bbox_generated_probe_after_analytics (AppCtx * appCtx, GstBuffer * buf,
     }
     testAppCtx->streams[stream_id].frameCount++;
   }
+
+  /*Publish to MQTT By JIM*/
+    pubmsg.payload;
+    pubmsg.qos = QOS;
+    pubmsg.retained = 0;
+
+    snprintf(mqttOutput, 200,"Circle %d Heart %d Square %d Triangle %d", Circle, Heart, Square, Triangle);
+    pubmsg.payload = mqttOutput;
+    pubmsg.payloadlen = strlen(pubmsg.payload);
+    MQTTClient_publishMessage(client, TOPIC, &pubmsg, &token);
 }
 
 /** @{ imported from deepstream-app as is */
@@ -971,7 +983,7 @@ event_thread_func (gpointer arg)
       } else {
         if (!show_bbox_text) {
           GstElement *nvosd = appCtx[rcfg]->pipeline.instance_bins[0].osd_bin.nvosd;
-          g_object_set (G_OBJECT (nvosd), "display-text", FALSE, NULL);
+          g_object_set (G_OBJECT (nvosd), "display-text", TRUE, NULL);  //to show text of object in boundary box By JIM
           g_object_set (G_OBJECT (tiler), "show-source", -1, NULL);
         }
         appCtx[rcfg]->active_source_index = -1;
@@ -1499,7 +1511,7 @@ main (int argc, char *argv[])
 
     if (!show_bbox_text) {
       GstElement *nvosd = appCtx[i]->pipeline.instance_bins[0].osd_bin.nvosd;
-      g_object_set(G_OBJECT(nvosd), "display-text", FALSE, NULL);
+      g_object_set(G_OBJECT(nvosd), "display-text", TRUE, NULL);  //to show text of object in boundary box By JIM
     }
 
     if (gst_element_set_state (appCtx[i]->pipeline.pipeline,
@@ -1665,7 +1677,7 @@ done:
 
   gst_deinit ();
   
-  /** Paho MQTT */
+  /** Paho MQTT*/
   g_print("Disconnecting MQTT Client\n");
   if ((rc = MQTTClient_disconnect(client, 10000)) != MQTTCLIENT_SUCCESS)
       printf("Failed to disconnect, return code %d\n", rc);
