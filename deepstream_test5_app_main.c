@@ -1681,8 +1681,8 @@ done:
   g_print("Disconnecting MQTT Client\n");
   if ((rc = MQTTClient_disconnect(client, 10000)) != MQTTCLIENT_SUCCESS)
       printf("Failed to disconnect, return code %d\n", rc);
-  g_print("Destroying MQTT Client\n");
   MQTTClient_destroy(&client);
+  g_print("Destroying MQTT Client\n");
 
   return return_value;
 
