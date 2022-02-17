@@ -10,10 +10,13 @@ https://developer.nvidia.com/deepstream-getting-started
 Azure iot egde:
 https://github.com/toolboc/Intelligent-Video-Analytics-with-NVIDIA-Jetson-and-Microsoft-Azure
 
-MQTT: 
-https://www.alibabacloud.com/help/en/doc-detail/146611.htm 
+MQTT Mosquitto Broker:
+http://www.steves-internet-guide.com/install-mosquitto-linux/
+
+MQTT Paho MQTT Client Installation:
 https://github.com/eclipse/paho.mqtt.embedded-c
+Paho Resource:
+https://www.eclipse.org/paho/files/mqttdoc/MQTTClient/html/pubsync.html
 
 Node-Red Docker Installation: 
 https://nodered.org/docs/getting-started/local
-
