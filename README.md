@@ -14,7 +14,7 @@ MQTT Mosquitto Broker:
 http://www.steves-internet-guide.com/install-mosquitto-linux/
 
 MQTT Paho MQTT Client Installation:
-https://github.com/eclipse/paho.mqtt.embedded-c
+https://github.com/eclipse/paho.mqtt.embedded-c  
 Paho Resource:
 https://www.eclipse.org/paho/files/mqttdoc/MQTTClient/html/pubsync.html
 
